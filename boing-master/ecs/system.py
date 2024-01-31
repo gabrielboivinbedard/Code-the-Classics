@@ -2,7 +2,7 @@ import pgzero, pgzrun, pygame
 import math, sys, random
 from enum import Enum
 from constants import *
-from util import *
+from ..util import *
 from ecs.entity import *
 from ecs.component import *
 from ecs.system import *
@@ -36,7 +36,6 @@ class Impact(Actor):
         # The Game class maintains a list of Impact instances. In Game.update, if the timer for an object
         # has gone beyond 10, the object is removed from the list.
         self.time += 1
-
 
 class Ball(Actor):
     def __init__(self, dx):
@@ -163,7 +162,6 @@ class Ball(Actor):
         # Has ball gone off the left or right edge of the screen?
         return self.x < 0 or self.x > WIDTH
 
-
 class Bat(Actor):
     def __init__(self, player, move_func=None):
         x = 40 if player == 0 else 760
@@ -244,11 +242,32 @@ class Bat(Actor):
         # each frame
         return min(MAX_AI_SPEED, max(-MAX_AI_SPEED, target_y - self.y))
 
-
 class Game:
     def __init__(self, controls=(None, None)):
+
+        bat1 = Entity(1)
+        bat1.add_component(PositionComponent(40,HALF_HEIGHT))
+        bat1.add_component(GraphicsComponent("bat00"))
+        bat1.add_component(ControlComponent(Control.PLAYER1))
+        bat1.add_component(BatComponent())
+
+        bat2 = Entity(2)
+        bat2.add_component(PositionComponent(760,HALF_HEIGHT))
+        bat2.add_component(GraphicsComponent("bat10"))
+        bat2.add_component(ControlComponent(Control.AI))
+        bat2.add_component(BatComponent())
+
+        ball = Entity(3)
+        ball.add_component(PositionComponent(HALF_WIDTH,HALF_HEIGHT))
+        ball.add_component(VelocityComponent(-1))
+        ball.add_component(GraphicsComponent("ball"))
+        ball.add_component(SoundComponent([])) #TODO
+        ball.add_component(BallComponent()) #TODO
+
+
         # Create a list of two bats, giving each a player number and a function to use to receive
         # control inputs (or the value None if this is intended to be an AI player)
+        
         self.bats = [Bat(0, controls[0]), Bat(1, controls[1])]
 
         # Create a ball object
