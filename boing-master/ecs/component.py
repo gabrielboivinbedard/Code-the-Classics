@@ -22,14 +22,22 @@ class ControlComponent:
     def __init__(self, control):
         self.control = control
 
+class PlayerComponent:
+    def __init__(self, player):
+        self.player = player
+
 class SoundComponent:
     def __init__(self, sounds):
         pass
 
-class BallComponent:
-    def __init__(self):
-        pass
+class ScoreComponent:
+    def __init__(self, score):
+        self.score = score
 
-class BatComponent:
-    def __init__(self):
-        pass
+class TimerComponent:
+    def __init__(self, counter):
+        self.counter = counter
+
+class EffectComponent:
+    def __init__(self, effect):
+        self.effect = effect

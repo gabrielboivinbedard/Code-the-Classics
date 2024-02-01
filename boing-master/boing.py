@@ -374,7 +374,6 @@ num_players = 1
 # Is space currently being held down?
 space_down = False
 
-
 # Pygame Zero calls the update and draw functions each frame
 
 def update():
@@ -449,8 +448,34 @@ except Exception:
 # Set the initial game state
 state = State.MENU
 
+# screen = pygame.display.set_mode((WIDTH, HEIGHT))
+# pygame.display.set_caption('Boing!!')
+
+bat1 = Entity(1, EntityType.BAT)
+bat1.add_component(PositionComponent(40, HALF_HEIGHT))
+bat1.add_component(GraphicsComponent("bat00"))
+bat1.add_component(ControlComponent(Control.PLAYER1))
+bat1.add_component(ScoreComponent(0))
+bat1.add_component(PlayerComponent(1))
+
+bat2 = Entity(2, EntityType.BAT)
+bat2.add_component(PositionComponent(760, HALF_HEIGHT))
+bat2.add_component(GraphicsComponent("bat10"))
+bat2.add_component(ControlComponent(Control.AI))
+bat2.add_component(ScoreComponent(0))
+bat2.add_component(PlayerComponent(2))
+
+ball = Entity(3, EntityType.BALL)
+ball.add_component(VelocityComponent(-1))
+ball.add_component(GraphicsComponent("ball"))
+
+game = Entity(4, EntityType.GAME)
+game.add_component(TimerComponent(0))
+
+
 # Create a new Game object, without any players
 game = Game()
+
 
 # Tell Pygame Zero to start - this line is only required when running the game from an IDE such as IDLE or PyCharm
 pgzrun.go()
