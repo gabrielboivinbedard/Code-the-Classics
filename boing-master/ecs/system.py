@@ -1,5 +1,5 @@
-from ecs.entity import *
-from ecs.component import *
+from .entity import *
+from .component import *
 from constants import *
 from util import *
 import pgzero, pgzrun, pygame
@@ -10,7 +10,7 @@ class RenderSystem:
         self.screen = screen
 
     def update(self, entities):
-        screen.blit("table", (0,0))
+        self.screen.blit("table", (0,0))
 
         for entity in entities:
             position = entity.get_component(PositionComponent)
@@ -20,7 +20,7 @@ class RenderSystem:
 
             if timer and player: #mettre les effets si un but a ete marque
                 if timer > 0: #TODO Check if ball is out
-                    screen.blit("effect"+str(player-1), (0,0))
+                    self.screen.blit("effect"+str(player-1), (0,0))
             
             if position and graphics:
 
@@ -43,6 +43,8 @@ class DynamicSystem:
         for entity in entities:
             position = entity.get_component(PositionComponent)
             velocity = entity.get_component(VelocityComponent)
+            player = entity.get_component(PlayerComponent)
+            timer = entity.get_component(TimerComponent)
 
             if velocity and position: #Ball Logic
                 original_x = entity.x
@@ -53,17 +55,17 @@ class DynamicSystem:
                 ballsign = sign( entity.x - HALF_WIDTH)
 
                 for ent2 in entities:
-                        batsign = sign(ent2.get_component(PositionComponent).x - HALF_WIDTH) #trouve l'entite de la bat du cote ou la balle se trouve
                         
-                        if ent2.type == EntityType.BAT and (batsign == ballsign):
-                            activebat = ent2
-                        if ent2.type == EntityType.BAT and (batsign != ballsign):
-                            opposingbat = ent2
+                        if ent2.type == EntityType.BAT:
+                            batsign = sign(ent2.get_component(PositionComponent).x - HALF_WIDTH) #trouve l'entite de la bat du cote ou la balle se trouve
+                            if batsign == ballsign:
+                                activebat = ent2
+                            if batsign != ballsign:
+                                opposingbat = ent2
+
                         if ent2.type == EntityType.GAME:
                             game = ent2
                     
-
-
                 if abs(entity.x - HALF_WIDTH) >= 344 and abs(original_x - HALF_WIDTH) < 344: 
                     
                     if entity.x < HALF_WIDTH:
@@ -107,11 +109,11 @@ class DynamicSystem:
                     entity.y += entity.dy
 
                     # TODO Create impact effect
-                    game.impacts.append(Impact(self.pos))
+                    # game.impacts.append(Impact(self.pos))
 
                     # TODO Sound effect
-                    game.play_sound("bounce", 5)
-                    game.play_sound("bounce_synth", 1)
+                    # game.play_sound("bounce", 5)
+                    # game.play_sound("bounce_synth", 1)
                 if entity.x <0 or entity.x > WIDTH: #TODO logique de scorer un but
                     if activebat.timer < 0:
                         opposingbat.score += 1
@@ -123,8 +125,25 @@ class DynamicSystem:
                         entity.x = HALF_WIDTH
                         entity.y = HALF_HEIGHT
                         # TODO Set la direction de la balle vers la active bat
+                        
+                        if sign(activebat.get_component(PositionComponent).x - HALF_WIDTH) < 0:
+                            entity.dx = -1
+                        else:
+                            entity.dx = 1
 
-                        pass
+            if player and timer: #Paddle Logic
+                for ent3 in entities:
+                    if ent3.type == EntityType.BALL:
+                        ball = ent3
+                entity.timer -= 1
+                frame = 0
+                if timer > 0:
+                    if ball.x <0 or ball.x > WIDTH:
+                        frame = 2
+                    else:
+                        frame = 1
+                
+                entity.path = "bat" + str(entity.player-1) + str(frame)
 
 class EffectsSystem:
     def __init__(self, screen):

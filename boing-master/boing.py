@@ -451,6 +451,8 @@ state = State.MENU
 # screen = pygame.display.set_mode((WIDTH, HEIGHT))
 # pygame.display.set_caption('Boing!!')
 
+entities = []
+
 bat1 = Entity(1, EntityType.BAT)
 bat1.add_component(PositionComponent(40, HALF_HEIGHT))
 bat1.add_component(GraphicsComponent("bat00"))
@@ -466,12 +468,20 @@ bat2.add_component(ScoreComponent(0))
 bat2.add_component(PlayerComponent(2))
 
 ball = Entity(3, EntityType.BALL)
+ball.add_component(PositionComponent(HALF_WIDTH,HALF_HEIGHT))
 ball.add_component(VelocityComponent(-1))
 ball.add_component(GraphicsComponent("ball"))
 
-game = Entity(4, EntityType.GAME)
-game.add_component(TimerComponent(0))
 
+entities.append(bat1)
+entities.append(bat2)
+entities.append(ball)
+
+render_system = RenderSystem(screen)
+dynamic_system = DynamicSystem()
+
+# render_system.update(entities)
+# dynamic_system.update(entities)
 
 # Create a new Game object, without any players
 game = Game()
