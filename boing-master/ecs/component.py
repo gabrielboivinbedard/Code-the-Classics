@@ -28,7 +28,12 @@ class PlayerComponent:
 
 class SoundComponent:
     def __init__(self, sounds):
-        pass
+        self.sounds = []
+        self.sounds.append(sounds)
+
+class MusicComponent:
+    def __init__(self, music):
+        self.music = music
 
 class ScoreComponent:
     def __init__(self, score):
@@ -40,4 +45,5 @@ class TimerComponent:
 
 class EffectComponent:
     def __init__(self, effect):
-        self.effect = effect
+        self.impact = []
+        self.impact.append(effect)

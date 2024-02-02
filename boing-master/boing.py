@@ -1,11 +1,6 @@
 import pgzero, pgzrun, pygame
 import math, sys, random
 from enum import Enum
-from constants import *
-from util import *
-from ecs.entity import *
-from ecs.component import *
-from ecs.system import *
 
 # Check Python version number. sys.version_info gives version as a tuple, e.g. if (3,7,2,'final',0) for version 3.7.2.
 # Unlike many languages, Python can compare two tuples in the same way that you can compare numbers.
@@ -22,6 +17,29 @@ pgzero_version = [int(s) if s.isnumeric() else s for s in pgzero.__version__.spl
 if pgzero_version < [1,2]:
     print("This game requires at least version 1.2 of Pygame Zero. You have version {0}. Please upgrade using the command 'pip3 install --upgrade pgzero'".format(pgzero.__version__))
     sys.exit()
+
+WIDTH = 800
+HEIGHT = 480
+TITLE = "Boing!"
+
+HALF_WIDTH = WIDTH // 2
+HALF_HEIGHT = HEIGHT // 2
+
+PLAYER_SPEED = 6
+MAX_AI_SPEED = 6
+
+def normalised(x, y):
+    # Return a unit vector
+    # Get length of vector (x,y) - math.hypot uses Pythagoras' theorem to get length of hypotenuse
+    # of right-angle triangle with sides of length x and y
+    # todo note on safety
+    length = math.hypot(x, y)
+    return (x / length, y / length)
+
+def sign(x):
+    # Returns -1 or 1 depending on whether number is positive or negative
+    return -1 if x < 0 else 1
+
 
 # Class for an animation which is displayed briefly whenever the ball bounces
 class Impact(Actor):
@@ -447,41 +465,6 @@ except Exception:
 
 # Set the initial game state
 state = State.MENU
-
-# screen = pygame.display.set_mode((WIDTH, HEIGHT))
-# pygame.display.set_caption('Boing!!')
-
-entities = []
-
-bat1 = Entity(1, EntityType.BAT)
-bat1.add_component(PositionComponent(40, HALF_HEIGHT))
-bat1.add_component(GraphicsComponent("bat00"))
-bat1.add_component(ControlComponent(Control.PLAYER1))
-bat1.add_component(ScoreComponent(0))
-bat1.add_component(PlayerComponent(1))
-
-bat2 = Entity(2, EntityType.BAT)
-bat2.add_component(PositionComponent(760, HALF_HEIGHT))
-bat2.add_component(GraphicsComponent("bat10"))
-bat2.add_component(ControlComponent(Control.AI))
-bat2.add_component(ScoreComponent(0))
-bat2.add_component(PlayerComponent(2))
-
-ball = Entity(3, EntityType.BALL)
-ball.add_component(PositionComponent(HALF_WIDTH,HALF_HEIGHT))
-ball.add_component(VelocityComponent(-1))
-ball.add_component(GraphicsComponent("ball"))
-
-
-entities.append(bat1)
-entities.append(bat2)
-entities.append(ball)
-
-render_system = RenderSystem(screen)
-dynamic_system = DynamicSystem()
-
-# render_system.update(entities)
-# dynamic_system.update(entities)
 
 # Create a new Game object, without any players
 game = Game()
